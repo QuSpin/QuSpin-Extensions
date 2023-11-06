@@ -1,4 +1,6 @@
 from setuptools import setup
+from Cython.Build import cythonize
+
 import os
 import sys
 import subprocess
@@ -6,8 +8,6 @@ import numpy as np
 
 
 def basis_1d_extension():
-    from Cython.Build import cythonize
-
     package_dir = os.path.join("src", "quspin", "extensions", "_basis_1d_core")
     cython_src = [
         os.path.join(package_dir, "hcp_basis.pyx"),
@@ -26,20 +26,44 @@ def basis_1d_extension():
 
 
 def matvec_extension():
-    from Cython.Build import cythonize
-
     package_dir = os.path.join("src", "quspin", "extensions", "matvec")
-    
+
     subprocess.check_call(
         [sys.executable, os.path.join(package_dir, "generate_oputils.py")]
     )
-    
+
     cython_src = [
         os.path.join(package_dir, "_oputils.pyx"),
     ]
-    exts = cythonize(cython_src)
+    includes = [np.get_include(), os.path.join(package_dir, "_oputils")]
 
-    includes = [np.get_include(), os.path.join(package_dir,"_oputils")]
+    exts = cythonize(cython_src, include_path=includes)
+
+    for ext in exts:
+        ext.include_dirs.extend(includes)
+
+    return exts
+
+
+def expm_multiply_parallel_core_extension():
+    package_dir = os.path.join(
+        "src", "quspin", "extensions", "expm_multiply_parallel_core"
+    )
+
+    subprocess.check_call(
+        [sys.executable, os.path.join(package_dir, "generate_source.py")]
+    )
+    cython_src = [
+        os.path.join(package_dir, "csr_matvec_wrapper.pyx"),
+        os.path.join(package_dir, "expm_multiply_parallel_wrapper.pyx"),
+    ]
+    includes = [
+        np.get_include(),
+        os.path.join("src", "quspin", "extensions", "matvec", "_oputils"),
+        os.path.join(package_dir, "source"),
+    ]
+
+    exts = cythonize(cython_src, include_path=includes)
 
     for ext in exts:
         ext.include_dirs.extend(includes)
@@ -55,7 +79,8 @@ setup(
     description="C Extensions to the QuSpin package",
     package_dir={"": "src"},
     ext_modules=[
-        *basis_1d_extension(),
+        # *basis_1d_extension(),
         *matvec_extension(),
+        *expm_multiply_parallel_core_extension(),
     ],
 )
