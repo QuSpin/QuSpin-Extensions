@@ -144,9 +144,9 @@ def generate_extensions(package_path, includes=[], extra_compile_args=[]):
 ext_modules = [
     *matvec_extension(),
     *expm_multiply_parallel_core_extension(),
-    # *basis_1d_extension(),
-    # *basis_general_core_extension(),
-    # *basis_utils_extension(),
+    *basis_1d_extension(),
+    *basis_general_core_extension(),
+    *basis_utils_extension(),
 ]
 setup(
     include_package_data=True,
