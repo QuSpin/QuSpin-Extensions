@@ -1,6 +1,6 @@
-from setuptools import setup
+from setuptools import setup, Extension
 from Cython.Build import cythonize
-
+from typing import List
 import os
 import sys
 import glob
@@ -30,10 +30,9 @@ def boost_includes():
             )
 
 
-def basis_utils_extension():
-    package_dir = os.path.join("src", "quspin", "extensions", "basis")
-
-    cython_src = os.path.join(package_dir, "_basis_utils.pyx")
+def basis_utils_extension() -> List[Extension]:
+    package_path = ("quspin", "extensions", "basis")
+    package_dir = os.path.join("src", *package_path)
 
     includes = [
         np.get_include(),
@@ -52,20 +51,14 @@ def basis_utils_extension():
             "-std=c++11",
         ]
 
-    exts = cythonize(cython_src, include_path=includes)
-
-    for ext in exts:
-        ext.include_dirs.extend(includes)
-        ext.extra_compile_args.extend(extra_compile_args)
-
-    return exts
+    return generate_extensions(package_path, includes, extra_compile_args)
 
 
-def basis_general_core_extension():
+def basis_general_core_extension() -> List[Extension]:
+    package_path = ("quspin", "extensions", "basis", "basis_general", "_basis_general_core")
     package_dir = os.path.join(
-        "src", "quspin", "extensions", "basis", "basis_general", "_basis_general_core"
+        "src", *package_path
     )
-    cython_src = glob.glob(os.path.join(package_dir, "*.pyx"))
     includes = [np.get_include(), os.path.join(package_dir, "source"), boost_includes()]
 
     if sys.platform == "win32":
@@ -78,91 +71,78 @@ def basis_general_core_extension():
             "-std=c++11",
         ]
 
-    extra_link_args = []
-
-    exts = cythonize(cython_src, include_path=includes)
-
-    for ext in exts:
-        ext.include_dirs.extend(includes)
-        ext.extra_compile_args.extend(extra_compile_args)
-        ext.extra_link_args.extend(extra_link_args)
-
-    return exts
+    return generate_extensions(package_path, includes, extra_compile_args)
 
 
-def basis_1d_extension():
-    package_dir = os.path.join(
-        "src", "quspin", "basis", "basis_1d", "extensions", "_basis_1d_core"
-    )
-    cython_src = glob.glob(os.path.join(package_dir, "*.pyx"))
+def basis_1d_extension() -> List[Extension]:
+    package_path = ("quspin", "basis", "basis_1d", "extensions", "_basis_1d_core")
+
     includes = [np.get_include()]
 
-    exts = cythonize(cython_src, include_path=includes)
-
-    for ext in exts:
-        ext.include_dirs.extend(includes)
-
-    return exts
+    return generate_extensions(package_path, includes)
 
 
-def matvec_extension():
-    package_dir = os.path.join("src", "quspin", "extensions", "tools", "matvec")
+def matvec_extension() -> List[Extension]:
+    package_path = ("quspin", "extensions", "tools", "matvec")
+    package_dir = os.path.join("src", *package_path)
 
     subprocess.check_call(
         [sys.executable, os.path.join(package_dir, "generate_oputils.py")]
     )
 
-    cython_src = [
-        os.path.join(package_dir, "_oputils.pyx"),
+    includes = [
+        np.get_include(),
+        os.path.join("src", "quspin", "extensions", "tools", "matvec", "_oputils"),
     ]
-    includes = [np.get_include(), os.path.join(package_dir, "_oputils")]
 
-    exts = cythonize(cython_src, include_path=includes)
-
-    for ext in exts:
-        ext.include_dirs.extend(includes)
-
-    return exts
+    return generate_extensions(package_path, includes)
 
 
-def expm_multiply_parallel_core_extension():
-    package_dir = os.path.join(
-        "src", "quspin", "extensions", "tools", "expm_multiply_parallel_core"
-    )
+def expm_multiply_parallel_core_extension() -> List[Extension]:
+    package_path = ("quspin", "extensions", "tools", "expm_multiply_parallel_core")
+    package_dir = os.path.join("src", *package_path)
 
     subprocess.check_call(
         [sys.executable, os.path.join(package_dir, "generate_source.py")]
     )
-    cython_src = [
-        os.path.join(package_dir, "csr_matvec_wrapper.pyx"),
-        os.path.join(package_dir, "expm_multiply_parallel_wrapper.pyx"),
-    ]
+
     includes = [
         np.get_include(),
         os.path.join("src", "quspin", "extensions", "tools", "matvec", "_oputils"),
         os.path.join(package_dir, "source"),
     ]
 
-    exts = cythonize(cython_src, include_path=includes)
+    return generate_extensions(package_path, includes)
 
-    for ext in exts:
-        ext.include_dirs.extend(includes)
 
-    return exts
+def generate_extensions(package_path, includes=[], extra_compile_args=[]):
+    package_dir = os.path.join("src", *package_path)
+    cython_src = glob.glob(os.path.join(package_dir, "*.pyx"))
+
+    exts = []
+
+    for cython_file in cython_src:
+        module_name = os.path.split(cython_file)[-1].replace(".pyx", "")
+        module_path = ".".join(package_path + (module_name,))
+
+        exts.append(
+            Extension(
+                module_path,
+                [cython_file],
+                include_dirs=includes,
+                extra_compile_args=extra_compile_args,
+            )
+        )
+
+    return cythonize(exts, include_path=includes)
 
 
 setup(
-    name="quspin-extensions",
-    version="0.1.0",
-    author="Phillip Weinberg, Marin Bukov",
-    author_email="weinbe58@gmail.com",
-    description="C Extensions to the QuSpin package",
-    package_dir={"": "src"},
     ext_modules=[
-        # *basis_1d_extension(),
-        # *matvec_extension(),
-        # *expm_multiply_parallel_core_extension(),
-        # *basis_general_core_extension(),
+        *basis_1d_extension(),
+        *matvec_extension(),
+        *expm_multiply_parallel_core_extension(),
+        *basis_general_core_extension(),
         *basis_utils_extension(),
     ],
 )
