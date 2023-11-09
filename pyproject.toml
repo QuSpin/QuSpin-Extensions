@@ -6,11 +6,11 @@ build-backend = "setuptools.build_meta"
 name = "quspin-extensions"
 version = "0.1.0"
 authors = [
-    {name = "Josiah Carberry", email = "josiah_carberry@brown.edu"},
+    {name = "Phillip Weinberg", email = "weinbe58@gmail.com"},
 ]
 description = "My package description"
 readme = "README.md"
-requires-python = ">=3.7"
+requires-python = ">=3.7,<3.12"
 license = {text = "BSD-3-Clause"}
 classifiers = [
     "Programming Language :: Python :: 3",
@@ -19,8 +19,3 @@ dependencies = [
     "numpy",
     "scipy",
 ]
-
-[tool.setuptools.packages.find]
-where = ["src"]  # list of folders that contain the packages (["."] by default)
-include = ["quspin*"]  # package names should match these glob patterns (["*"] by default)
-namespaces = false  # to disable scanning PEP 420 namespaces (true by default)

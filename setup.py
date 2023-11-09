@@ -1,4 +1,4 @@
-from setuptools import setup, Extension
+from setuptools import find_namespace_packages, setup, Extension
 from Cython.Build import cythonize
 from typing import List
 import os
@@ -55,10 +55,14 @@ def basis_utils_extension() -> List[Extension]:
 
 
 def basis_general_core_extension() -> List[Extension]:
-    package_path = ("quspin", "extensions", "basis", "basis_general", "_basis_general_core")
-    package_dir = os.path.join(
-        "src", *package_path
+    package_path = (
+        "quspin",
+        "extensions",
+        "basis",
+        "basis_general",
+        "_basis_general_core",
     )
+    package_dir = os.path.join("src", *package_path)
     includes = [np.get_include(), os.path.join(package_dir, "source"), boost_includes()]
 
     if sys.platform == "win32":
@@ -137,12 +141,16 @@ def generate_extensions(package_path, includes=[], extra_compile_args=[]):
     return cythonize(exts, include_path=includes)
 
 
+ext_modules = [
+    *matvec_extension(),
+    *expm_multiply_parallel_core_extension(),
+    # *basis_1d_extension(),
+    # *basis_general_core_extension(),
+    # *basis_utils_extension(),
+]
 setup(
-    ext_modules=[
-        *basis_1d_extension(),
-        *matvec_extension(),
-        *expm_multiply_parallel_core_extension(),
-        *basis_general_core_extension(),
-        *basis_utils_extension(),
-    ],
+    include_package_data=True,
+    packages=find_namespace_packages(where='src'),
+    package_dir={'': 'src'},
+    ext_modules=ext_modules,
 )
