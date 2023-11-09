@@ -1,4 +1,4 @@
-from setuptools import find_namespace_packages, setup, Extension
+from setuptools import find_packages, setup, Extension
 from Cython.Build import cythonize
 from typing import List
 import os
@@ -150,7 +150,7 @@ ext_modules = [
 ]
 setup(
     include_package_data=True,
-    packages=find_namespace_packages(where='src'),
+    packages=find_packages(where='src'),
     package_dir={'': 'src'},
     ext_modules=ext_modules,
 )
