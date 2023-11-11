@@ -4,7 +4,6 @@ from typing import List
 import os
 import sys
 import glob
-import subprocess
 import numpy as np
 
 
@@ -85,40 +84,6 @@ def basis_1d_extension() -> List[Extension]:
 
     return generate_extensions(package_path, includes)
 
-
-def matvec_extension() -> List[Extension]:
-    package_path = ("quspin", "extensions", "tools", "matvec")
-    package_dir = os.path.join("src", *package_path)
-
-    subprocess.check_call(
-        [sys.executable, os.path.join(package_dir, "generate_oputils.py")]
-    )
-
-    includes = [
-        np.get_include(),
-        os.path.join("src", "quspin", "extensions", "tools", "matvec", "_oputils"),
-    ]
-
-    return generate_extensions(package_path, includes)
-
-
-def expm_multiply_parallel_core_extension() -> List[Extension]:
-    package_path = ("quspin", "extensions", "tools", "expm_multiply_parallel_core")
-    package_dir = os.path.join("src", *package_path)
-
-    subprocess.check_call(
-        [sys.executable, os.path.join(package_dir, "generate_source.py")]
-    )
-
-    includes = [
-        np.get_include(),
-        os.path.join("src", "quspin", "extensions", "tools", "matvec", "_oputils"),
-        os.path.join(package_dir, "source"),
-    ]
-
-    return generate_extensions(package_path, includes)
-
-
 def generate_extensions(package_path, includes=[], extra_compile_args=[]):
     package_dir = os.path.join("src", *package_path)
     cython_src = glob.glob(os.path.join(package_dir, "*.pyx"))
@@ -142,8 +107,6 @@ def generate_extensions(package_path, includes=[], extra_compile_args=[]):
 
 
 ext_modules = [
-    *matvec_extension(),
-    *expm_multiply_parallel_core_extension(),
     *basis_1d_extension(),
     *basis_general_core_extension(),
     *basis_utils_extension(),
