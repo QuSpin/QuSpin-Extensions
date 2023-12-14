@@ -42,7 +42,7 @@ jobs:
         uses: pypa/cibuildwheel@v2.16.2
         env:
           CIBW_BUILD: ${{ matrix.python }}
-          CIBW_ENVIRONMENT: BOOST_ROOT=${{github.workspace}}/src/quspin/extensions/includes
+          CIBW_ENVIRONMENT: BOOST_ROOT=src/quspin/extensions/includes
       - uses: actions/upload-artifact@v3
         with:
           path: ./wheelhouse/*.whl
