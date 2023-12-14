@@ -16,6 +16,14 @@ concurrency:
 
 
 jobs:
+  - name: Install boost
+    uses: MarkusJx/install-boost@v2.4.4
+    id: install-boost
+    with:
+        # REQUIRED: Specify the required boost version
+        # A list of supported versions can be found here:
+        # https://github.com/MarkusJx/prebuilt-boost/blob/main/versions-manifest.json
+        boost_version: 1.73.0
   build_wheels:
     name: Build wheels on ${{ matrix.os }} for CPython ${{ matrix.python }}
     runs-on: ${{ matrix.os }}
@@ -34,11 +42,11 @@ jobs:
         with:
           platforms: all
 
-
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.16.2
         env:
           CIBW_BUILD: ${{ matrix.python }}
+          BOOST_ROOT: ${{ steps.install-boost.outputs.boost_root }}
       - uses: actions/upload-artifact@v3
         with:
           path: ./wheelhouse/*.whl

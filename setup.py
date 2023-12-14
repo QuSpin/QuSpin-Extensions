@@ -8,8 +8,8 @@ import numpy as np
 
 
 def boost_includes():
-    if "BOOST_INCLUDES" in os.environ:
-        return os.environ["BOOST_INCLUDES"]
+    if "BOOST_ROOT" in os.environ:
+        return os.environ["BOOST_ROOT"]
     else:
         from sysconfig import get_paths
 
@@ -25,7 +25,7 @@ def boost_includes():
         else:
             raise ValueError(
                 f"No boost directory found in {python_includes} and no value "
-                "set for BOOST_INCLUDES environment variable."
+                "set for BOOST_ROOT environment variable."
             )
 
 

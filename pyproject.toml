@@ -7,6 +7,7 @@ name = "quspin-extensions"
 version = "0.1.0"
 authors = [
     {name = "Phillip Weinberg", email = "weinbe58@gmail.com"},
+    {name = "Marin Bukov", email = "mbukov@gmail.com"}
 ]
 description = "C++ extensions for QuSpin"
 readme = "README.md"
