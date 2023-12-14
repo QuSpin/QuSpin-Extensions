@@ -29,8 +29,8 @@ jobs:
         run: |
           curl -L -O https://github.com/scipy/boost-headers-only/archive/refs/heads/main.zip
           7z x main.zip
-          mkdir includes
-          cp -r boost-headers-only-main/boost includes 
+          mkdir ${{github.workspace}}/includes
+          cp -r boost-headers-only-main/boost ${{github.workspace}}/includes 
       - name: Set up QEMU
         if: runner.os == 'Linux'
         uses: docker/setup-qemu-action@v3
@@ -54,8 +54,8 @@ jobs:
         run: |
           curl -L -O https://github.com/scipy/boost-headers-only/archive/refs/heads/main.zip
           7z x main.zip
-          mkdir includes
-          cp -r boost-headers-only-main/boost includes 
+          mkdir ${{github.workspace}}/includes
+          cp -r boost-headers-only-main/boost ${{github.workspace}}/includes 
       - name: Build sdist
         run: pipx run build --sdist
         env:
