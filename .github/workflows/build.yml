@@ -16,70 +16,67 @@ concurrency:
 
 
 jobs:
-  build_wheels:
-    name: Build wheels on ${{ matrix.os }} for CPython ${{ matrix.python }}
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os: [ubuntu-20.04] #, windows-2019, macos-11]
-        python: [cp39-*] #, cp310-*, cp311-*, cp312-*]
-    steps:
-      - uses: actions/checkout@v4
-      - uses: MarkusJx/install-boost@v2.4.4
-        id: install-boost
-        with:
-          boost_version: 1.73.0
-      - name: Remove binary files from boost installation
-        if: runner.os == 'Linux'
-        run: | 
-          find ${{ steps.install-boost.outputs.boost_root }} -name '*.hpp'
-          find ${{ steps.install-boost.outputs.boost_root }} -name '*.so' | xargs rm -rf
-      - name: Set up QEMU
-        if: runner.os == 'Linux'
-        uses: docker/setup-qemu-action@v3
-        with:
-          platforms: all
-      - name: Build wheels
-        uses: pypa/cibuildwheel@v2.16.2
-        env:
-          CIBW_BUILD: ${{ matrix.python }}
-          CIBW_ENVIRONMENT: BOOST_ROOT=${{github.workspace}}/boost
-      - uses: actions/upload-artifact@v3
-        with:
-          path: ./wheelhouse/*.whl
+  # build_wheels:
+  #   name: Build wheels on ${{ matrix.os }} for CPython ${{ matrix.python }}
+  #   runs-on: ${{ matrix.os }}
+  #   strategy:
+  #     matrix:
+  #       os: [ubuntu-20.04] #, windows-2019, macos-11]
+  #       python: [cp39-*] #, cp310-*, cp311-*, cp312-*]
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - uses: actions/checkout@v4
+  #       id: install-boost
+  #       with:
+  #         repository: scipy/boost-headers-only/
+  #         path: boost-repo
+  #     - name: Set up QEMU
+  #       if: runner.os == 'Linux'
+  #       uses: docker/setup-qemu-action@v3
+  #       with:
+  #         platforms: all
+  #     - name: Build wheels
+  #       uses: pypa/cibuildwheel@v2.16.2
+  #       env:
+  #         CIBW_BUILD: ${{ matrix.python }}
+  #         CIBW_ENVIRONMENT: BOOST_ROOT=${{github.workspace}}/boost
+  #     - uses: actions/upload-artifact@v3
+  #       with:
+  #         path: ./wheelhouse/*.whl
 
   build_sdist:
     name: Build source distribution
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: MarkusJx/install-boost@v2.4.4
-        id: install-boost
-        with:
-          boost_version: 1.73.0
-      - name: Build sdist
-        run: pipx run build --sdist
-        env:
-          BOOST_ROOT: ${{ steps.install-boost.outputs.boost_root }}
-      - uses: actions/upload-artifact@v3
-        with:
-          path: dist/*.tar.gz
+      - name: Get boost headers
+        run: |
+          curl -L -O https://github.com/scipy/boost-headers-only/archive/refs/heads/main.zip
+          7z x main.zip
+          ls -la 
+      # - name: Build sdist
+      #   run: pipx run build --sdist
+      #   env:
+      #     BOOST_ROOT: ${{github.workspace}}/boost-repo
+      # - uses: actions/upload-artifact@v3
+      #   with:
+      #     path: dist/*.tar.gz
 
-  upload_pypi:
-    needs: [build_wheels, build_sdist]
-    runs-on: ubuntu-latest
-    environment: pypi
-    permissions:
-      id-token: write
-    if: github.event_name == 'release' && github.event.action == 'published'
-    # or, alternatively, upload to PyPI on every tag starting with 'v' (remove on: release above to use this)
-    # if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
-    steps:
-      - uses: actions/download-artifact@v3
-        with:
-          # unpacks default artifact into dist/
-          # if `name: artifact` is omitted, the action will create extra parent dir
-          name: artifact
-          path: dist
+  # upload_pypi:
+  #   needs: [build_wheels, build_sdist]
+  #   runs-on: ubuntu-latest
+  #   environment: pypi
+  #   permissions:
+  #     id-token: write
+  #   if: github.event_name == 'release' && github.event.action == 'published'
+  #   # or, alternatively, upload to PyPI on every tag starting with 'v' (remove on: release above to use this)
+  #   # if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+  #   steps:
+  #     - uses: actions/download-artifact@v3
+  #       with:
+  #         # unpacks default artifact into dist/
+  #         # if `name: artifact` is omitted, the action will create extra parent dir
+  #         name: artifact
+  #         path: dist
 
-      - uses: pypa/gh-action-pypi-publish@release/v1
+  #     - uses: pypa/gh-action-pypi-publish@release/v1
