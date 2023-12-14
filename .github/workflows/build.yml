@@ -43,7 +43,7 @@ jobs:
         uses: pypa/cibuildwheel@v2.16.2
         env:
           CIBW_BUILD: ${{ matrix.python }}
-          CIBW_ENVIRONMENT: BOOST_ROOT=${{ steps.install-boost.outputs.boost_root }}
+          CIBW_ENVIRONMENT: BOOST_ROOT=${{github.workspace}}/boost
       - uses: actions/upload-artifact@v3
         with:
           path: ./wheelhouse/*.whl
