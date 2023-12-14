@@ -29,6 +29,9 @@ jobs:
         id: install-boost
         with:
           boost_version: 1.73.0
+      - name: Remove binary files from boost installation
+        if: runner.os == 'Linux'
+        run: find ${{ steps.install-boost.outputs.boost_root }} -type f -name '*.so' -delete
       - name: Set up QEMU
         if: runner.os == 'Linux'
         uses: docker/setup-qemu-action@v3
@@ -52,11 +55,6 @@ jobs:
         id: install-boost
         with:
           boost_version: 1.73.0
-      - name: Remove binary files from boost installation
-        run: |
-          find ${{ steps.install-boost.outputs.boost_root }} -type f -name '*.so' -delete
-          find ${{ steps.install-boost.outputs.boost_root }} -type f -name '*.dll' -delete
-          find ${{ steps.install-boost.outputs.boost_root }} -type f -name '*.dylib' -delete
       - name: Build sdist
         run: pipx run build --sdist
         env:
