@@ -54,7 +54,8 @@ jobs:
           boost_version: 1.73.0
       - name: Build sdist
         run: pipx run build --sdist
-
+        env:
+          BOOST_ROOT: ${{ steps.install-boost.outputs.boost_root }}
       - uses: actions/upload-artifact@v3
         with:
           path: dist/*.tar.gz
