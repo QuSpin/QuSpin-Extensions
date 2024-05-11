@@ -28,6 +28,9 @@ dependencies = [
     "scipy",
 ]
 
+[tool.setuptools.packages.find]
+where = ["src"]
+
 [tool.cibuildwheel]
 skip = ""
 test-skip = ""
