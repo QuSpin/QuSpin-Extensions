@@ -43,7 +43,7 @@ jobs:
         env:
           CIBW_BUILD: ${{ matrix.python }}
           CIBW_ENVIRONMENT: BOOST_ROOT=src/quspin/extensions/includes
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           path: ./wheelhouse/*.whl
 
@@ -63,7 +63,7 @@ jobs:
         run: pipx run build --sdist
         env:
           BOOST_ROOT: ${{github.workspace}}/src/quspin/extensions/includes
-      - uses: actions/upload-artifact@v3
+      - uses: actions/upload-artifact@v4
         with:
           path: dist/*.tar.gz
 
