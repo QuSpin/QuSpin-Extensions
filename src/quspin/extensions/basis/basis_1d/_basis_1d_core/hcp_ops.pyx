@@ -17,8 +17,6 @@ import numpy as _np
 #from scipy.misc import comb
 from scipy.special import comb
 
-cdef extern from "glibc_fix.h":
-    pass
 
 
 
