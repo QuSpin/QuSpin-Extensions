@@ -28,6 +28,9 @@ dependencies = [
     "scipy",
 ]
 
+[tool.setuptools.packages.find]
+where = ["src"]
+
 [tool.cibuildwheel]
 skip = ""
 test-skip = ""
@@ -37,7 +40,7 @@ config-settings = {}
 dependency-versions = "pinned"
 environment = {}
 environment-pass = []
-build-verbosity = 0
+build-verbosity = 1
 
 before-all = ""
 before-build = ""

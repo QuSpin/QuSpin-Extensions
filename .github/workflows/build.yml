@@ -16,14 +16,6 @@ concurrency:
 
 
 jobs:
-  - name: Install boost
-    uses: MarkusJx/install-boost@v2.4.4
-    id: install-boost
-    with:
-        # REQUIRED: Specify the required boost version
-        # A list of supported versions can be found here:
-        # https://github.com/MarkusJx/prebuilt-boost/blob/main/versions-manifest.json
-        boost_version: 1.73.0
   build_wheels:
     name: Build wheels on ${{ matrix.os }} for CPython ${{ matrix.python }}
     runs-on: ${{ matrix.os }}
@@ -31,10 +23,14 @@ jobs:
       matrix:
         os: [ubuntu-20.04, windows-2019, macos-11]
         python: [cp39-*, cp310-*, cp311-*, cp312-*]
-        
-
     steps:
       - uses: actions/checkout@v4
+      - name: Get boost headers
+        run: |
+          curl -L -O https://github.com/scipy/boost-headers-only/archive/refs/heads/main.zip
+          7z x main.zip
+          mkdir ${{github.workspace}}/src/quspin/extensions/includes
+          cp -r boost-headers-only-main/boost ${{github.workspace}}/src/quspin/extensions/includes
 
       - name: Set up QEMU
         if: runner.os == 'Linux'
@@ -43,10 +39,10 @@ jobs:
           platforms: all
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.16.2
+        uses: pypa/cibuildwheel@v2.17.0
         env:
           CIBW_BUILD: ${{ matrix.python }}
-          BOOST_ROOT: ${{ steps.install-boost.outputs.boost_root }}
+          CIBW_ENVIRONMENT: BOOST_ROOT=src/quspin/extensions/includes
       - uses: actions/upload-artifact@v3
         with:
           path: ./wheelhouse/*.whl
@@ -56,10 +52,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-
+      - name: Get boost headers
+        run: |
+          curl -L -O https://github.com/scipy/boost-headers-only/archive/refs/heads/main.zip
+          7z x main.zip
+          mkdir ${{github.workspace}}/src/quspin/extensions/includes
+          cp -r boost-headers-only-main/boost ${{github.workspace}}/src/quspin/extensions/includes
+    
       - name: Build sdist
         run: pipx run build --sdist
-
+        env:
+          BOOST_ROOT: ${{github.workspace}}/src/quspin/extensions/includes
       - uses: actions/upload-artifact@v3
         with:
           path: dist/*.tar.gz
