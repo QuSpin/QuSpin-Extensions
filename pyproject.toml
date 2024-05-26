@@ -70,12 +70,12 @@ musllinux-s390x-image = "musllinux_1_1"
 
 
 [tool.cibuildwheel.linux]
-archs = ["x86_64"]
+archs = ["native"]
 repair-wheel-command = "auditwheel repair -w {dest_dir} {wheel}"
 
 [tool.cibuildwheel.macos]
-archs = ["universal2"]
+archs = ["native"]
 repair-wheel-command = "delocate-wheel --require-archs {delocate_archs} -w {dest_dir} -v {wheel}"
 
 [tool.cibuildwheel.windows]
-archs = ["AMD64"]
+archs = ["native"]
