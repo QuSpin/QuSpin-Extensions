@@ -78,7 +78,7 @@ def basis_general_core_extension() -> List[Extension]:
 
 
 def basis_1d_extension() -> List[Extension]:
-    package_path = ("quspin", "basis", "basis_1d", "extensions", "_basis_1d_core")
+    package_path = ("quspin", "extensions", "basis", "basis_1d", "_basis_1d_core")
 
     includes = [np.get_include()]
 
