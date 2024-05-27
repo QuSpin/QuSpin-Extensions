@@ -1,5 +1,5 @@
 
-// #include "misc.h"
+#include "misc.h"
 
 template<class I,class J>
 int inline partition_swaps(I s,const J map[],const int N){
