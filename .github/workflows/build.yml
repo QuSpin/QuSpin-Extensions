@@ -59,7 +59,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        submodule: [quspin-basis-general-extensions, quspin-basis-1d-extensions, quspin-basis-utils]
+        submodule: [quspin-basis-utils-extensions]
 
     steps:
       - uses: actions/checkout@v4
@@ -76,7 +76,7 @@ jobs:
         run: pipx run build --sdist
         working-directory: ${{matrix.submodule}}
         env:
-          BOOST_ROOT: ${{github.workspace}}/quspin-basis-general-extensions/src/quspin/extensions/includes
+          BOOST_ROOT: ${{github.workspace}}/{{ matrix.submodule }}/src/quspin/extensions/includes
 
       - uses: actions/upload-artifact@v4
         with:
