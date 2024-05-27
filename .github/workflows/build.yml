@@ -16,7 +16,7 @@ concurrency:
 
 jobs:
   build_wheels:
-    name: Build wheels on ${{ matrix.os }} for CPython ${{ matrix.python }}
+    name: Build {{ matrix.submodule }} wheels on ${{ matrix.os }} for CPython ${{ matrix.python }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
@@ -55,7 +55,7 @@ jobs:
           path: ${{ github.workspace }}/${{ matrix.submodule }}/wheelhouse/*.whl
 
   build_sdist:
-    name: Build source distribution
+    name: Build source distribution for ${{ matrix.submodule }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
