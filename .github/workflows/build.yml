@@ -80,7 +80,7 @@ jobs:
       - uses: actions/upload-artifact@v4
         with:
           name: cibw-sdist
-          path: dist/*.tar.gz
+          path: ${{github.workspace}}/{{ matrix.subpackage }}/dist/*.tar.gz
 
   upload_all:
     needs: [build_wheels, build_sdist]
@@ -93,7 +93,7 @@ jobs:
     - uses: actions/download-artifact@v4
       with:
         pattern: cibw-*
-        path: dist
+        path: ${{github.workspace}}/{{ matrix.subpackage }}/dist
         merge-multiple: true
 
     - uses: pypa/gh-action-pypi-publish@release/v1
