@@ -64,7 +64,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Get boost headers
-        if: matrix.submodule == 'quspin-basis-general-extensions'
         working-directory: ${{matrix.submodule}}
         run: |
           curl -L -O https://github.com/scipy/boost-headers-only/archive/refs/heads/main.zip
