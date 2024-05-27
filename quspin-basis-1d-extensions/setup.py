@@ -78,7 +78,7 @@ def basis_general_core_extension() -> List[Extension]:
 
 
 def basis_1d_extension() -> List[Extension]:
-    package_path = ("quspin", "basis", "basis_1d", "extensions", "_basis_1d_core")
+    package_path = ("quspin", "extensions", "basis", "basis_1d", "_basis_1d_core")
 
     includes = [np.get_include()]
 
@@ -87,7 +87,7 @@ def basis_1d_extension() -> List[Extension]:
 def generate_extensions(package_path, includes=[], extra_compile_args=[]):
     package_dir = os.path.join("src", *package_path)
     cython_src = glob.glob(os.path.join(package_dir, "*.pyx"))
-
+    print(cython_src)
     exts = []
 
     for cython_file in cython_src:
@@ -108,8 +108,8 @@ def generate_extensions(package_path, includes=[], extra_compile_args=[]):
 
 ext_modules = [
     *basis_1d_extension(),
-    # *basis_general_core_extension(),
-    # *basis_utils_extension(),
+    *basis_general_core_extension(),
+    *basis_utils_extension(),
 ]
 setup(
     include_package_data=True,
