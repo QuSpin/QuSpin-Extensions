@@ -16,17 +16,17 @@ concurrency:
 
 jobs:
   build_wheels:
-    name: Build {{ matrix.submodule }} wheels on ${{ matrix.os }} for CPython ${{ matrix.python }}
+    name: Build {{ matrix.subpackage }} wheels on ${{ matrix.os }} for CPython ${{ matrix.python }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [ubuntu-latest, windows-latest, macos-13, macos-14]
         python: [cp39, cp310, cp311, cp312]
-        submodule: [quspin-basis-general-extensions, quspin-basis-1d-extensions]
+        subpackage: [quspin-basis-general-extensions, quspin-basis-1d-extensions]
     steps:
       - uses: actions/checkout@v4
       - name: Get boost headers
-        working-directory: ${{ github.workspace }}/${{ matrix.submodule }}
+        working-directory: ${{ github.workspace }}/${{ matrix.subpackage }}
         run: |
           curl -L -O https://github.com/scipy/boost-headers-only/archive/refs/heads/main.zip
           7z x main.zip
@@ -44,27 +44,27 @@ jobs:
         run: python -m pip install cibuildwheel==2.18.0
       - name: Build wheels
         run: python -m cibuildwheel --output-dir wheelhouse
-        working-directory: ${{ github.workspace }}/${{ matrix.submodule }}
+        working-directory: ${{ github.workspace }}/${{ matrix.subpackage }}
         env:
           CIBW_BUILD: ${{ matrix.python }}-*
           CIBW_ENVIRONMENT: BOOST_ROOT=src/quspin/extensions/includes
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: cibw-wheels-${{ matrix.submodule }}-${{ matrix.os }}-${{ matrix.python }}
-          path: ${{ github.workspace }}/${{ matrix.submodule }}/wheelhouse/*.whl
+          name: cibw-wheels-${{ matrix.subpackage }}-${{ matrix.os }}-${{ matrix.python }}
+          path: ${{ github.workspace }}/${{ matrix.subpackage }}/wheelhouse/*.whl
 
   build_sdist:
-    name: Build source distribution for ${{ matrix.submodule }}
+    name: Build source distribution for ${{ matrix.subpackage }}
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        submodule: [quspin-basis-general-extensions, quspin-basis-1d-extensions]
+        subpackage: [quspin-basis-general-extensions, quspin-basis-1d-extensions]
 
     steps:
       - uses: actions/checkout@v4
       - name: Get boost headers
-        working-directory: ${{matrix.submodule}}
+        working-directory: ${{matrix.subpackage}}
         run: |
           curl -L -O https://github.com/scipy/boost-headers-only/archive/refs/heads/main.zip
           7z x main.zip
@@ -73,9 +73,9 @@ jobs:
 
       - name: Build sdist
         run: pipx run build --sdist
-        working-directory: ${{matrix.submodule}}
+        working-directory: ${{matrix.subpackage}}
         env:
-          BOOST_ROOT: ${{github.workspace}}/{{ matrix.submodule }}/src/quspin/extensions/includes
+          BOOST_ROOT: ${{github.workspace}}/{{ matrix.subpackage }}/src/quspin/extensions/includes
 
       - uses: actions/upload-artifact@v4
         with:
