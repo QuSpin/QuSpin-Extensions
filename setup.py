@@ -30,7 +30,7 @@ def boost_includes():
 
 
 def basis_utils_extension() -> List[Extension]:
-    package_path = ("quspin", "extensions", "basis")
+    package_path = ("quspin_extensions", "basis")
     package_dir = os.path.join("src", *package_path)
 
     includes = [
@@ -55,8 +55,7 @@ def basis_utils_extension() -> List[Extension]:
 
 def basis_general_core_extension() -> List[Extension]:
     package_path = (
-        "quspin",
-        "extensions",
+        "quspin_extensions",
         "basis",
         "basis_general",
         "_basis_general_core",
@@ -78,7 +77,7 @@ def basis_general_core_extension() -> List[Extension]:
 
 
 def basis_1d_extension() -> List[Extension]:
-    package_path = ("quspin", "extensions", "basis", "basis_1d", "_basis_1d_core")
+    package_path = ("quspin_extensions", "basis", "basis_1d", "_basis_1d_core")
 
     includes = [np.get_include()]
 

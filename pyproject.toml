@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "quspin-extensions"
-version = "0.1.1"
+version = "0.1.2"
 authors = [
     {name = "Phillip Weinberg", email = "weinbe58@gmail.com"},
     {name = "Marin Bukov", email = "mbukov@gmail.com"}
@@ -26,6 +26,7 @@ classifiers = [
 dependencies = [
     "numpy",
     "scipy",
+    "gmpy2>=2.2.0",
 ]
 
 [tool.setuptools.packages.find]
