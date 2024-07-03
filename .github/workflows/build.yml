@@ -29,7 +29,7 @@ jobs:
         run: |
           curl -L -O https://github.com/scipy/boost-headers-only/archive/refs/heads/main.zip
           7z x main.zip
-          mkdir ${{github.workspace}}/src/quspin/extensions/includes
+          mkdir ${{github.workspace}}/src/quspin_extensions/includes
           cp -r boost-headers-only-main/boost ${{github.workspace}}/src/quspin/extensions/includes
 
       - name: Set up QEMU
@@ -57,7 +57,7 @@ jobs:
         run: |
           curl -L -O https://github.com/scipy/boost-headers-only/archive/refs/heads/main.zip
           7z x main.zip
-          mkdir ${{github.workspace}}/src/quspin/extensions/includes
+          mkdir ${{github.workspace}}/src/quspin_extensions/includes
           cp -r boost-headers-only-main/boost ${{github.workspace}}/src/quspin/extensions/includes
 
       - name: Build sdist
