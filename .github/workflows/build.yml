@@ -30,7 +30,7 @@ jobs:
           curl -L -O https://github.com/scipy/boost-headers-only/archive/refs/heads/main.zip
           7z x main.zip
           mkdir ${{github.workspace}}/src/quspin_extensions/includes
-          cp -r boost-headers-only-main/boost ${{github.workspace}}/src/quspin/extensions/includes
+          cp -r boost-headers-only-main/boost ${{github.workspace}}/src/quspin_extensions/includes
 
       - name: Set up QEMU
         if: runner.os == 'Linux'
@@ -42,7 +42,7 @@ jobs:
         uses: pypa/cibuildwheel@v2.19.1
         env:
           CIBW_BUILD: ${{ matrix.python }}-*
-          CIBW_ENVIRONMENT: BOOST_ROOT=src/quspin/extensions/includes
+          CIBW_ENVIRONMENT: BOOST_ROOT=src/quspin_extensions/includes
       - uses: actions/upload-artifact@v4
         with:
           name: cibw-wheels-${{ matrix.os }}-${{ matrix.python }}
@@ -58,12 +58,12 @@ jobs:
           curl -L -O https://github.com/scipy/boost-headers-only/archive/refs/heads/main.zip
           7z x main.zip
           mkdir ${{github.workspace}}/src/quspin_extensions/includes
-          cp -r boost-headers-only-main/boost ${{github.workspace}}/src/quspin/extensions/includes
+          cp -r boost-headers-only-main/boost ${{github.workspace}}/src/quspin_extensions/includes
 
       - name: Build sdist
         run: pipx run build --sdist
         env:
-          BOOST_ROOT: ${{github.workspace}}/src/quspin/extensions/includes
+          BOOST_ROOT: ${{github.workspace}}/src/quspin_extensions/includes
 
       - uses: actions/upload-artifact@v4
         with:
