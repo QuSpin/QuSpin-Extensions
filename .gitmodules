@@ -1,3 +1,0 @@
-[submodule "boost-headers-only"]
-	path = boost-headers-only
-	url = https://github.com/scipy/boost-headers-only.git
