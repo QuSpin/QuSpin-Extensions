@@ -39,7 +39,7 @@ jobs:
           platforms: all
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.19.1
+        uses: pypa/cibuildwheel@v2.20.0
         env:
           CIBW_BUILD: ${{ matrix.python }}-*
           CIBW_ENVIRONMENT: BOOST_ROOT=src/quspin_extensions/includes
