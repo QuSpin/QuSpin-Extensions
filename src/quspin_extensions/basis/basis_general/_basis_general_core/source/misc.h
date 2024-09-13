@@ -121,7 +121,7 @@ K binary_search(const K N,const I A[],const I s){
 
 
 template<class I>
-struct compare : std::binary_function<I,I,bool>
+struct compare
 {
 	inline bool operator()(const I &a,const I &b){return a > b;}
 };
@@ -274,7 +274,7 @@ int inline type_checks(std::complex<double> m,const T v,T *M){
 }
 
 template<class I>
-struct compare_arr : std::binary_function<npy_intp,npy_intp,bool>
+struct compare_arr
 {
 	const I * array;
 	compare_arr(const I * ptr) : array(ptr) {}

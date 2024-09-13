@@ -11,22 +11,20 @@ def boost_includes():
     if "BOOST_ROOT" in os.environ:
         return os.environ["BOOST_ROOT"]
     else:
-        from sysconfig import get_paths
-
-        data_path = get_paths()["data"]
-
-        if sys.platform == "win32":
-            python_includes = os.path.join(data_path, "Library", "include")
-        else:
-            python_includes = os.path.join(data_path, "include")
-
-        if "boost" in os.listdir(python_includes):
-            return os.path.join(python_includes, "boost")
-        else:
-            raise ValueError(
-                f"No boost directory found in {python_includes} and no value "
-                "set for BOOST_ROOT environment variable."
-            )
+        path = None
+        
+        for root, dirs, files in os.walk("."):
+            if "boost" in dirs:
+                path = root
+                break
+            
+        if path is None:
+            raise FileNotFoundError("Could not find boost headers")
+        
+        return path
+            
+            
+            
 
 
 def basis_utils_extension() -> List[Extension]:
@@ -47,7 +45,7 @@ def basis_utils_extension() -> List[Extension]:
             "-fno-strict-aliasing",
             "-Wno-unused-variable",
             "-Wno-unknown-pragmas",
-            "-std=c++11",
+            "-std=c++17",
         ]
 
     return generate_extensions(package_path, includes, extra_compile_args)
@@ -70,7 +68,7 @@ def basis_general_core_extension() -> List[Extension]:
             "-fno-strict-aliasing",
             "-Wno-unused-variable",
             "-Wno-unknown-pragmas",
-            "-std=c++11",
+            "-std=c++17",
         ]
 
     return generate_extensions(package_path, includes, extra_compile_args)
@@ -106,9 +104,9 @@ def generate_extensions(package_path, includes=[], extra_compile_args=[]):
 
 
 ext_modules = [
-    *basis_1d_extension(),
+    # *basis_1d_extension(),
     *basis_general_core_extension(),
-    *basis_utils_extension(),
+    # *basis_utils_extension(),
 ]
 setup(
     include_package_data=True,
