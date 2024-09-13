@@ -9,7 +9,7 @@ import numpy as np
 
 def boost_includes():
     if "BOOST_ROOT" in os.environ:
-        return os.path.join(os.environ["BOOST_ROOT"], "include")
+        include_path = os.path.join(os.environ["BOOST_ROOT"], "include")
     else:
         path = None
         
@@ -22,8 +22,9 @@ def boost_includes():
             raise FileNotFoundError("Could not find boost headers")
         
         include_path = os.path.join(path, "include")
-        print(f"[ASDAFASDF] {include_path}")
-        return include_path
+        
+    print(f"[ASDAFASDF] {include_path}")
+    return include_path
             
             
             
