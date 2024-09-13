@@ -21,8 +21,9 @@ def boost_includes():
         if path is None:
             raise FileNotFoundError("Could not find boost headers")
         
-
-        return os.path.join(path, "include")
+        include_path = os.path.join(path, "include")
+        print(include_path)
+        return include_path
             
             
             
