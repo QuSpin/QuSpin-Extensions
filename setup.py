@@ -9,7 +9,7 @@ import numpy as np
 
 def boost_includes():
     if "BOOST_ROOT" in os.environ:
-        include_path = os.path.join(os.environ["BOOST_ROOT"], "include")
+        path = os.environ["BOOST_ROOT"]
     else:
         path = None
         
@@ -21,8 +21,7 @@ def boost_includes():
         if path is None:
             raise FileNotFoundError("Could not find boost headers")
         
-        include_path = os.path.join(path, "include")
-        
+    include_path = os.path.join(path, "include")
     print(f"[ASDAFASDF] {include_path}")
     return include_path
             
@@ -87,7 +86,7 @@ def basis_1d_extension() -> List[Extension]:
 def generate_extensions(package_path, includes=[], extra_compile_args=[]):
     package_dir = os.path.join("src", *package_path)
     cython_src = glob.glob(os.path.join(package_dir, "*.pyx"))
-
+    cython_src = cython_src[:1]
     exts = []
 
     for cython_file in cython_src:
@@ -107,9 +106,9 @@ def generate_extensions(package_path, includes=[], extra_compile_args=[]):
 
 
 ext_modules = [
-    *basis_1d_extension(),
     *basis_general_core_extension(),
-    *basis_utils_extension(),
+    # *basis_1d_extension(),
+    # *basis_utils_extension(),
 ]
 setup(
     include_package_data=True,
