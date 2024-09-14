@@ -14,7 +14,7 @@ def boost_includes():
         path = None
         
         for root, dirs, files in os.walk("."):
-            if "boost" in dirs:
+            if "boost" in root and "include" in dirs:
                 path = root
                 break
             
