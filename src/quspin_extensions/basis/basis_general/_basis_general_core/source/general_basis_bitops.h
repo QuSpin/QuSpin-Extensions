@@ -10,19 +10,19 @@
 namespace basis_general {
 
 template<class I>
-struct bitwise_and_op : std::binary_function<I,I,I>
+struct bitwise_and_op
 {
 	I inline operator()(I a, I b){return a & b;}
 };
 
 template<class I>
-struct bitwise_or_op : std::binary_function<I,I,I>
+struct bitwise_or_op
 {
 	I inline operator()(I a, I b){return a | b;}
 };
 
 template<class I>
-struct bitwise_xor_op : std::binary_function<I,I,I>
+struct bitwise_xor_op
 {
 	I inline operator()(I a, I b){return a ^ b;}
 };
@@ -30,13 +30,13 @@ struct bitwise_xor_op : std::binary_function<I,I,I>
 
 
 template<class I, class J>
-struct bitwise_left_shift_op : std::binary_function<I,J,I> 
+struct bitwise_left_shift_op
 {
 	I inline operator()(I a, J b){return a << b;}
 };
 
 template<class I, class J>
-struct bitwise_right_shift_op : std::binary_function<I,J,I>
+struct bitwise_right_shift_op
 {
 	I inline operator()(I a, J b){return a >> b;}
 };
