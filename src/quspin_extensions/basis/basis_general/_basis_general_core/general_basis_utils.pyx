@@ -31,7 +31,7 @@ def basis_int_to_python_int(basis_int):
     This function takes a QuSpin basis type integer and converts it to a python integer with the same value. 
 
     Parameters
-    -----------
+    ----------
     basis_int: scalar
         integer to be converted
 
@@ -83,7 +83,7 @@ def python_int_to_basis_int(python_int,dtype=None):
     fit that integer. 
 
     Parameters
-    -----------
+    ----------
     python_int: int
         integer to be converted
     dtype: dtype, optional
@@ -234,7 +234,7 @@ def _basis_argsort(_np.ndarray basis):
     This function returns the indices to sort a basis array of integer types in decending order. 
 
     Parameters
-    -----------
+    ----------
     basis: ndarray, (M,)
         array of basis integers to find decending order
 
@@ -287,7 +287,7 @@ def basis_zeros(shape,dtype=uint32):
     This function creates an array of integers which are properly initialized to 0. 
 
     Parameters
-    -----------
+    ----------
     shape: tuple
         shape of the numpy array.
     dtype: numpy.dtype, optional
@@ -343,7 +343,7 @@ def basis_ones(shape,dtype=uint32):
     This function creates an array of integers which are properly initialized to 1. 
 
     Parameters
-    -----------
+    ----------
     shape: tuple
         shape of the numpy array.
     dtype: numpy.dtype, optional
@@ -393,15 +393,15 @@ def basis_ones(shape,dtype=uint32):
 
 
 def get_basis_type(N, Np, sps):
-    """ Returns minimum dtype to represent manybody state. 
+    """ Returns minimum `dtype` to represent manybody state. 
 
-    Given the system size, number of particles and states per site this function calculates the minimum type required to represent those states.
+    Given the system size, number of particles and states per site, this function calculates the minimum type required to represent those states.
 
     Parameters
-    -----------
+    ----------
     N : int
         total number of sites on lattice
-    Np : None, int, or list of ints
+    Np : None, int, list[int]
         number of particles on the lattice. For a list, the largest particle sector is chosen for the representation. 
     sps: int
         number of possible states allowed per site. e.g. spin-1/2 has 2 possible states per site. 
@@ -480,7 +480,7 @@ def bitwise_not(x, out=None, where=None):
     Performs pair-wise bitwise NOT operation basis states in integer representation.
 
     Parameters
-    -----------
+    ----------
     x : array-like
         a collection of integers which contain basis states to apply pair-wise NOT on.
     out : array-like, optional
@@ -584,7 +584,7 @@ def bitwise_and(x1, x2, out=None, where=None):
     Performs pair-wise bitwise AND operation on pairs of basis states in integer representation.
 
     Parameters
-    -----------
+    ----------
     x1 : array-like
         a collection of integers which contain basis states to apply pair-wise AND on.
     x2 : array-like
@@ -704,7 +704,7 @@ def bitwise_or(x1, x2, out=None, where=None):
     Performs pair-wise bitwise OR operation on pairs of basis states in integer representation.
 
     Parameters
-    -----------
+    ----------
     x1 : array-like
         a collection of integers which contain basis states to apply pair-wise OR on.
     x2 : array-like
@@ -824,7 +824,7 @@ def bitwise_xor(x1, x2, out=None, where=None):
     Performs pair-wise bitwise OR operation on pairs of basis states in integer representation.
 
     Parameters
-    -----------
+    ----------
     x1 : array-like
         a collection of integers which contain basis states to apply pair-wise XOR on.
     x2 : array-like
