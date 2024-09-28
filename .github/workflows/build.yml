@@ -25,24 +25,25 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Get boost headers
-        run: |
-          curl -L -O https://github.com/scipy/boost-headers-only/archive/refs/heads/main.zip
-          7z x main.zip
-          mkdir ${{github.workspace}}/src/quspin_extensions/includes
-          cp -r boost-headers-only-main/boost ${{github.workspace}}/src/quspin_extensions/includes
-
       - name: Set up QEMU
         if: runner.os == 'Linux'
         uses: docker/setup-qemu-action@v3
         with:
           platforms: all
-
+      - name: Install boost
+        uses: MarkusJx/install-boost@v2.4.5
+        id: install-boost
+        with:
+          boost_version: 1.86.0
+          boost_install_dir: ${{github.workspace}}
+      # - name: List files
+      #   run: ls -R ${{ steps.install-boost.outputs.BOOST_ROOT }}
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.19.1
+        uses: pypa/cibuildwheel@v2.21.1
         env:
           CIBW_BUILD: ${{ matrix.python }}-*
-          CIBW_ENVIRONMENT: BOOST_ROOT=src/quspin_extensions/includes
+          BOOST_ROOT: ./boost/boost
+
       - uses: actions/upload-artifact@v4
         with:
           name: cibw-wheels-${{ matrix.os }}-${{ matrix.python }}
@@ -53,17 +54,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Get boost headers
-        run: |
-          curl -L -O https://github.com/scipy/boost-headers-only/archive/refs/heads/main.zip
-          7z x main.zip
-          mkdir ${{github.workspace}}/src/quspin_extensions/includes
-          cp -r boost-headers-only-main/boost ${{github.workspace}}/src/quspin_extensions/includes
+      - name: Install boost
+        uses: MarkusJx/install-boost@v2.4.5
+        id: install-boost
+        with:
+          boost_version: 1.86.0
+          boost_install_dir: ${{github.workspace}}/src/quspin_extensions/
 
       - name: Build sdist
         run: pipx run build --sdist
         env:
-          BOOST_ROOT: ${{github.workspace}}/src/quspin_extensions/includes
+          BOOST_ROOT: ./src/quspin_extensions/boost/boost
 
       - uses: actions/upload-artifact@v4
         with:

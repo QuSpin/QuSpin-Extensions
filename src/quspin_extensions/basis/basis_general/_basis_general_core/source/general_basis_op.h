@@ -488,7 +488,7 @@ template<class T,class K>
 using Tuple = boost::tuple<T&,K&,K&>;
 
 template<class T>
-struct nonzero : std::unary_function<T,bool>
+struct nonzero
 {
     inline bool operator()(const T& tup) const {
         return equal_zero(boost::get<0>(tup));
