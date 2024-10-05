@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "quspin-extensions"
-version = "0.1.3"
+version = "0.1.4"
 authors = [
     {name = "Phillip Weinberg", email = "weinbe58@gmail.com"},
     {name = "Marin Bukov", email = "mbukov@gmail.com"}
