@@ -111,7 +111,7 @@ def basis_general_core_extension(**kwargs) -> List[Extension]:
             "-std=c++17",
         ]
 
-    return generate_extensions(package_path, includes, extra_compile_args,**kwargs)
+    return generate_extensions(package_path, includes,**kwargs)
 
 
 def basis_1d_extension(**kwargs) -> List[Extension]:
