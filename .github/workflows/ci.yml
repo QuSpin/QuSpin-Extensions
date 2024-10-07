@@ -1,0 +1,41 @@
+name: codecov upload
+# only run on merge into main branch
+on: 
+  pull_request:
+  push:
+    branches:
+      - main
+  release:
+    types:
+      - published
+
+jobs:
+  quspin-tests:
+    name: Run QuSpin tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Checkout QuSpin
+        uses: actions/checkout@v4
+        with:
+          repository: QuSpin/QuSpin
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+      
+      - name: checking pip 
+        run:  python -m ensurepip --upgrade
+
+      - name: Install
+        working-directory: ${{github.workspace}}
+        run: |
+          pip install -e QuSpin-Extensions/
+          pip install -e QuSpin/
+          pip install pytest
+
+      - name: Test
+        working-directory: ${{github.workspace}}/QuSpin
+        run: pytest -x
+
+        
