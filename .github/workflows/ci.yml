@@ -1,13 +1,10 @@
-name: codecov upload
+name: CI
 # only run on merge into main branch
 on: 
   pull_request:
   push:
     branches:
       - main
-  release:
-    types:
-      - published
 
 jobs:
   quspin-tests:
@@ -30,6 +27,7 @@ jobs:
       - name: Install
         working-directory: ${{github.workspace}}
         run: |
+          ls -la
           pip install -e QuSpin-Extensions/
           pip install -e QuSpin/
           pip install pytest
