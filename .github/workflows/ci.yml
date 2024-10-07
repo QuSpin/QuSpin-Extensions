@@ -11,29 +11,31 @@ jobs:
     name: Run QuSpin tests
     runs-on: ubuntu-latest
     steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: checking pip 
+        run:  python -m ensurepip --upgrade
+
+      - name: Checkout QuSpin-Extensions
+        uses: actions/checkout@v4
+
+      - name: Install QuSpin-Extensions
+        run: pip install -e .
+
       - name: Checkout QuSpin
         uses: actions/checkout@v4
         with:
           repository: QuSpin/QuSpin
-      - name: Checkout
-        uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.10'
-      
-      - name: checking pip 
-        run:  python -m ensurepip --upgrade
 
-      - name: Install
-        working-directory: ${{github.workspace}}/../
+      - name: Install QuSpin
         run: |
-          ls -la
-          pip install -e QuSpin-Extensions/
-          pip install -e QuSpin/
-          pip install pytest
+          pip install -e .
 
-      - name: Test
-        working-directory: ${{github.workspace}}/../QuSpin
-        run: pytest -x
+      - name: Test QuSpin
+        run: |
+          pip install pytest
+          pytest -x
 
         
