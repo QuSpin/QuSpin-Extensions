@@ -14,16 +14,15 @@ def boost_includes():
         path = None
         
         for root, dirs, files in os.walk("."):
-            if "boost" in root and "include" in dirs:
+            if "include" in root and "boost" in dirs:
                 path = root
                 break
             
         if path is None:
             raise FileNotFoundError("Could not find boost headers")
         
-    include_path = os.path.join(path, "include")
-    print(f"[BOOST LOG] {include_path}")
-    return include_path
+    print(f"[BOOST LOG] {path}")
+    return path
             
                
 def extra_compile_args() -> List[str]:
