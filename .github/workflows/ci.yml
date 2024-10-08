@@ -11,38 +11,45 @@ jobs:
     name: Run QuSpin tests
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-
-      - name: checking pip 
-        run:  python -m ensurepip --upgrade
-
       - name: Checkout QuSpin-Extensions
         uses: actions/checkout@v4
+        with:
+          repository: QuSpin/QuSpin-Extensions
+          path: ${{github.workspace}}/QuSpin-Extensions
+
+      - name: Checkout QuSpin
+        uses: actions/checkout@v4
+        with:
+          repository: QuSpin/QuSpin
+          path: ${{github.workspace}}/QuSpin
 
       - name: Install boost
         uses: MarkusJx/install-boost@v2.4.5
         id: install-boost
         with:
           boost_version: 1.86.0
-          boost_install_dir: ${{github.workspace}}
+          boost_install_dir: ${{github.workspace}}/QuSpin-Extensions
 
+      - name : Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Checking pip 
+        run:  python -m ensurepip --upgrade
+        
+      - name: Install QuSpin
+        working-directory: ${{github.workspace}}/QuSpin
+        run: pip install -e .
+          
       - name: Install QuSpin-Extensions
+        working-directory: ${{github.workspace}}/QuSpin-Extensions
         run: pip install -e .
         env:
           BOOST_ROOT: ./boost/boost
 
-      - name: Checkout QuSpin
-        uses: actions/checkout@v4
-        with:
-          repository: QuSpin/QuSpin
-
-      - name: Install QuSpin
-        run: |
-          pip install -e .
-
       - name: Test QuSpin
+        working-directory: ${{github.workspace}}/QuSpin
         run: |
           pip install pytest
           pytest -x
