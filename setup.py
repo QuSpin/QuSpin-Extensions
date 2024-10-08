@@ -25,9 +25,57 @@ def boost_includes():
     print(f"[BOOST LOG] {include_path}")
     return include_path
             
-            
-            
+               
+def extra_compile_args() -> List[str]:
+    if sys.platform in ["win32", "cygwin", "win64"]:
+        extra_compile_args = ["/openmp", "/std:c++17"]
+    if sys.platform in ["darwin"]:
+        extra_compile_args = [
+            "-DLLVM_ENABLE_PROJECTS",
+            "-Xpreprocessor",
+            "-fopenmp-version=50"
+            "-fopenmp",
+            "--std=c++17",
+        ]
+    else:
+        extra_compile_args = ["-fopenmp", "--std=c++17"]
 
+    if os.environ.get("COVERAGE", False):
+        if sys.platform in ["win32", "cygwin", "win64", "darwin"]:
+            raise ValueError("Coverage is not supported on Windows or macOS")
+        
+        extra_compile_args += [
+            '--coverage', 
+            '-fno-inline', 
+            '-fno-inline-small-functions', 
+            '-fno-default-inline', 
+            '-O0'
+        ]        
+
+    return extra_compile_args
+
+
+def extra_link_args() -> List[str]:
+    if sys.platform in ["win32", "cygwin", "win64"]:
+        extra_link_args = ["/openmp"]
+    if sys.platform in ["darwin"]:
+        extra_link_args = [
+            "-DLLVM_ENABLE_PROJECTS",
+            "-Xpreprocessor",
+            "-fopenmp-version=50"
+            "-fopenmp",
+        ]
+    else:
+        extra_link_args = ["-fopenmp"]
+
+    if os.environ.get("COVERAGE", False):
+        if sys.platform in ["win32", "cygwin", "win64", "darwin"]:
+            raise ValueError("Coverage is not supported on Windows or macOS")
+        
+        extra_link_args += ["--coverage"]
+
+    return extra_link_args
+ 
 
 def basis_utils_extension(**kwargs) -> List[Extension]:
     package_path = ("quspin_extensions", "basis")
@@ -40,17 +88,7 @@ def basis_utils_extension(**kwargs) -> List[Extension]:
         os.path.join(package_dir, "basis_general", "_basis_general_core", "source"),
     ]
 
-    if sys.platform == "win32":
-        extra_compile_args = []
-    else:
-        extra_compile_args = [
-            "-fno-strict-aliasing",
-            "-Wno-unused-variable",
-            "-Wno-unknown-pragmas",
-            "-std=c++17",
-        ]
-
-    return generate_extensions(package_path, includes, extra_compile_args, **kwargs)
+    return generate_extensions(package_path, includes, **kwargs)
 
 
 def basis_general_core_extension(**kwargs) -> List[Extension]:
@@ -73,7 +111,7 @@ def basis_general_core_extension(**kwargs) -> List[Extension]:
             "-std=c++17",
         ]
 
-    return generate_extensions(package_path, includes, extra_compile_args,**kwargs)
+    return generate_extensions(package_path, includes,**kwargs)
 
 
 def basis_1d_extension(**kwargs) -> List[Extension]:
@@ -83,9 +121,9 @@ def basis_1d_extension(**kwargs) -> List[Extension]:
 
     return generate_extensions(package_path, includes, **kwargs)
 
-def generate_extensions(package_path, includes=[], extra_compile_args=[], skip_ext=lambda x: False):
+def generate_extensions(package_path, includes=[], skip_ext=lambda x: False):
     package_dir = os.path.join("src", *package_path)
-    cython_src = glob.glob(os.path.join(package_dir, "*.pyx"))
+    cython_src = glob.glob(os.path.join(package_dir, "*.pyx"))    
 
     exts = []
 
@@ -101,7 +139,8 @@ def generate_extensions(package_path, includes=[], extra_compile_args=[], skip_e
                 module_path,
                 [cython_file],
                 include_dirs=includes,
-                extra_compile_args=extra_compile_args,
+                extra_compile_args=extra_compile_args(),
+                extra_link_args=extra_link_args(),
             )
         )
 
