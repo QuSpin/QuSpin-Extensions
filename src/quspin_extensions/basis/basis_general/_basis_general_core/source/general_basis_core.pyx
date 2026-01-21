@@ -13,6 +13,13 @@ from libcpp.utility cimport pair
 from .general_basis_utils import uint32,uint64,uint256,uint1024,uint4096,uint16384
 
 
+try:
+    # NumPy >= 1.25 (and NumPy 2.x)
+    _ComplexWarning = _np.exceptions.ComplexWarning
+except Exception:
+    # NumPy <= 1.24: still available as np.ComplexWarning
+    _ComplexWarning = _np.ComplexWarning
+
 
 @cython.boundscheck(False)
 cdef get_proj_helper(general_basis_core[npy_uint] * B, npy_uint * basis, int nt, int nnt,
@@ -266,7 +273,7 @@ cdef class general_basis_core_wrap:
         if err.first == -1:
             raise ValueError("operator not recognized.")
         elif err.second == 1:
-            warnings.warn("attempting to use real type for complex matrix elements.",_np.ComplexWarning,stacklevel=4)
+            warnings.warn("attempting to use real type for complex matrix elements.",_ComplexWarning,stacklevel=4)
         elif err.first != 0:
             raise RuntimeError("user defined error code: {}".format(err.first))
  
