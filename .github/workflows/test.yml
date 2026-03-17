@@ -27,14 +27,28 @@ jobs:
         if: runner.os == 'Linux'
         run: sudo apt-get install -y libboost-dev
 
+      - name: Set BOOST_ROOT (Linux)
+        if: runner.os == 'Linux'
+        run: echo "BOOST_ROOT=/usr" >> $GITHUB_ENV
+
       - name: Install Boost (macOS)
         if: runner.os == 'macOS'
         run: brew install boost
+
+      - name: Set BOOST_ROOT (macOS)
+        if: runner.os == 'macOS'
+        run: echo "BOOST_ROOT=$(brew --prefix boost)" >> $GITHUB_ENV
 
       - name: Install Boost (Windows)
         if: runner.os == 'Windows'
         run: choco install boost-msvc-14.3 --no-progress
         shell: powershell
+
+      - name: Set BOOST_ROOT (Windows)
+        if: runner.os == 'Windows'
+        run: echo "BOOST_ROOT=C:\local\boost_1_84_0" >> $env:GITHUB_ENV
+        shell: powershell      
+ 
 
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v5
