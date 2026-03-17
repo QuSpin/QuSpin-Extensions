@@ -1,0 +1,40 @@
+name: Testing
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - master
+  #schedule:
+  #- cron: '00 01 * * *'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12", "3.13", "3.14"]
+        os: [ubuntu-latest, windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+      - uses: pdm-project/setup-pdm@v4
+        name: Setup PDM
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Install libomp (macOS)
+        if: runner.os == 'macOS'
+        run: brew install libomp
+      - name: Install dependencies
+        run: pdm install -G dev
+      - name: Test with pytest & generate coverage
+        run: |
+          pdm test
