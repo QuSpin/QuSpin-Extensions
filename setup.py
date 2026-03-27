@@ -48,7 +48,7 @@ def boost_includes():
 def extra_compile_args() -> List[str]:
 
     if sys.platform in ["win32", "cygwin", "win64"]:
-        extra_compile_args = ["/openmp", "/std:c++17"]
+        extra_compile_args = ["/openmp:llvm", "/std:c++17"]
 
     elif sys.platform == "darwin":
         include_dir, _ = _find_libomp()
