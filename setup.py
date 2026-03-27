@@ -57,7 +57,7 @@ def extra_compile_args() -> List[str]:
             f"-I{include_dir}",
         ]
     else:
-        extra_compile_args = ["-fopenmp", "--std=c++17", "-g0"]
+        extra_compile_args = ["-fopenmp", "--std=c++17"]
 
     if os.environ.get("COVERAGE", False):
         if sys.platform in ["win32", "cygwin", "win64", "darwin"]:
