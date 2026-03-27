@@ -30,7 +30,7 @@ jobs:
         id: install-boost
         with:
           boost_version: 1.86.0
-          boost_install_dir: ${{github.workspace}}
+          boost_install_dir: ${{github.workspace}}/QuSpin-Extensions
       # - name: List files
       #   run: ls -R ${{ steps.install-boost.outputs.BOOST_ROOT }}
       - name: Build wheels
