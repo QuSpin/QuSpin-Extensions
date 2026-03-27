@@ -16,8 +16,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-13, macos-14]
-        python: [cp39, cp310, cp311, cp312, cp313]
+        os: [ubuntu-latest, windows-latest, macos-15-intel, macos-15]
+        python: [cp311, cp312, cp313, cp314]
 
     steps:
       - uses: actions/checkout@v4
@@ -35,7 +35,7 @@ jobs:
       # - name: List files
       #   run: ls -R ${{ steps.install-boost.outputs.BOOST_ROOT }}
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.21.2
+        uses: pypa/cibuildwheel@v3.1.2
         env:
           CIBW_BUILD: ${{ matrix.python }}-*
           BOOST_ROOT: ./boost/boost

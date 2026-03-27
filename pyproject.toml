@@ -1,34 +1,35 @@
 [build-system]
-requires = ["setuptools", "wheel", "Cython", "numpy"]
+requires = ["setuptools>=64", "wheel", "Cython>3.1", "numpy"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "quspin-extensions"
-version = "0.1.6"
+version = "0.1.7"
 authors = [
     {name = "Phillip Weinberg", email = "weinbe58@gmail.com"},
     {name = "Marin Bukov", email = "mbukov@gmail.com"}
 ]
 description = "C++ extensions for QuSpin"
 readme = "README.md"
-requires-python = ">=3.9"
+requires-python = ">=3.11, <3.15"
 license = {text = "BSD-3-Clause"}
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Operating System :: Microsoft :: Windows",
     "Operating System :: MacOS",
     "Operating System :: POSIX :: Linux",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
 ]
 dependencies = [
-    "numpy",
-    "scipy",
+    "numpy>=2.0.0",
+    "scipy>=1.13.0",
     "gmpy2>=2.2.0",
 ]
+
+
 
 [tool.setuptools.packages.find]
 where = ["src"]
@@ -55,14 +56,14 @@ test-extras = []
 
 container-engine = "docker"
 
-manylinux-x86_64-image = "manylinux2014"
-manylinux-i686-image = "manylinux2014"
-manylinux-aarch64-image = "manylinux2014"
-manylinux-ppc64le-image = "manylinux2014"
-manylinux-s390x-image = "manylinux2014"
-manylinux-pypy_x86_64-image = "manylinux2014"
-manylinux-pypy_i686-image = "manylinux2014"
-manylinux-pypy_aarch64-image = "manylinux2014"
+manylinux-x86_64-image = "manylinux_2_28"
+manylinux-i686-image = "manylinux_2_28"
+manylinux-aarch64-image = "manylinux_2_28"
+manylinux-ppc64le-image = "manylinux_2_28"
+manylinux-s390x-image = "manylinux_2_28"
+manylinux-pypy_x86_64-image = "manylinux_2_28"
+manylinux-pypy_i686-image = "manylinux_2_28"
+manylinux-pypy_aarch64-image = "manylinux_2_28"
 
 musllinux-x86_64-image = "musllinux_1_1"
 musllinux-i686-image = "musllinux_1_1"
@@ -77,6 +78,7 @@ repair-wheel-command = "auditwheel repair -w {dest_dir} {wheel}"
 
 [tool.cibuildwheel.macos]
 archs = ["native"]
+environment = {MACOSX_DEPLOYMENT_TARGET = "15.0"}
 repair-wheel-command = "delocate-wheel --require-archs {delocate_archs} -w {dest_dir} -v {wheel}"
 
 [tool.cibuildwheel.windows]
