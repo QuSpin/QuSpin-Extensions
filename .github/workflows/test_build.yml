@@ -1,13 +1,9 @@
 name: Build test
-
-on:
-  workflow_dispatch: 
- 
+on: workflow_dispatch
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
-
 
 jobs:
   build_wheels:
@@ -20,24 +16,59 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up QEMU
         if: runner.os == 'Linux'
         uses: docker/setup-qemu-action@v3
         with:
           platforms: all
-      - name: Install boost
+
+      # Use MarkusJx action for Linux and macOS (no symlink issues)
+      - name: Install boost (Linux/macOS)
+        if: runner.os != 'Windows'
         uses: MarkusJx/install-boost@v2.4.5
-        id: install-boost
+        id: install-boost-unix
         with:
           boost_version: 1.86.0
-          boost_install_dir: ${{github.workspace}}
-      # - name: List files
-      #   run: ls -R ${{ steps.install-boost.outputs.BOOST_ROOT }}
+          boost_install_dir: ${{ github.workspace }}/QuSpin-Extensions
+
+      # On Windows, download and extract with tar.exe to avoid 7-Zip symlink errors
+      - name: Install boost (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $boostDir = "${{ github.workspace }}\QuSpin-Extensions\boost"
+          New-Item -ItemType Directory -Force -Path $boostDir | Out-Null
+
+          # Download the Boost tarball
+          $url = "https://github.com/MarkusJx/prebuilt-boost/releases/download/boost-1.86.0/boost-1.86.0-windows-2022-msvc-static-x86.tar.gz"
+          $archive = "$boostDir\boost.tar.gz"
+          Invoke-WebRequest -Uri $url -OutFile $archive
+
+          # Use Windows built-in tar.exe (handles symlinks correctly, unlike 7-Zip)
+          tar -xzf $archive -C $boostDir
+          Remove-Item $archive
+
+      # Set BOOST_ROOT for Windows based on the extracted path
+      - name: Set BOOST_ROOT (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $boostRoot = "${{ github.workspace }}\QuSpin-Extensions\boost\boost"
+          echo "BOOST_ROOT=$boostRoot" >> $env:GITHUB_ENV
+
+      # Set BOOST_ROOT for Linux/macOS from the action's output
+      - name: Set BOOST_ROOT (Linux/macOS)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          echo "BOOST_ROOT=${{ steps.install-boost-unix.outputs.BOOST_ROOT }}" >> $GITHUB_ENV
+
       - name: Build wheels
         uses: pypa/cibuildwheel@v3.1.2
         env:
           CIBW_BUILD: ${{ matrix.python }}-*
-          BOOST_ROOT: ./boost/boost
+          BOOST_ROOT: ${{ env.BOOST_ROOT }}
 
       - uses: actions/upload-artifact@v4
         with:
@@ -49,17 +80,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Install boost
         uses: MarkusJx/install-boost@v2.4.5
         id: install-boost
         with:
           boost_version: 1.86.0
-          boost_install_dir: ${{github.workspace}}/src/quspin_extensions/
+          boost_install_dir: ${{ github.workspace }}/src/quspin_extensions/
 
       - name: Build sdist
         run: pipx run build --sdist
         env:
-          BOOST_ROOT: ./src/quspin_extensions/boost/boost
+          BOOST_ROOT: ${{ steps.install-boost.outputs.BOOST_ROOT }}
 
       - uses: actions/upload-artifact@v4
         with:
