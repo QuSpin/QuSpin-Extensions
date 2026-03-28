@@ -48,7 +48,7 @@ def boost_includes():
 def extra_compile_args() -> List[str]:
 
     if sys.platform in ["win32", "cygwin", "win64"]:
-        extra_compile_args = ["/openmp", "/std:c++17"]
+        extra_compile_args = ["/openmp:llvm", "/std:c++17"]
 
     elif sys.platform == "darwin":
         include_dir, _ = _find_libomp()
@@ -57,7 +57,7 @@ def extra_compile_args() -> List[str]:
             f"-I{include_dir}",
         ]
     else:
-        extra_compile_args = ["-fopenmp", "--std=c++17"]
+        extra_compile_args = ["-fopenmp", "--std=c++17", "-g0"] #For developers, it is recommended to remove the -g0 flag for detailed traceback calls
 
     if os.environ.get("COVERAGE", False):
         if sys.platform in ["win32", "cygwin", "win64", "darwin"]:

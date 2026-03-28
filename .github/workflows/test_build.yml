@@ -23,7 +23,6 @@ jobs:
         with:
           platforms: all
 
-      # Use MarkusJx action for Linux and macOS (no symlink issues)
       - name: Install boost (Linux/macOS)
         if: runner.os != 'Windows'
         uses: MarkusJx/install-boost@v2.4.5
@@ -32,7 +31,6 @@ jobs:
           boost_version: 1.86.0
           boost_install_dir: ${{ github.workspace }}/QuSpin-Extensions
 
-      # On Windows, download and extract with tar.exe to avoid 7-Zip symlink errors
       - name: Install boost (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
@@ -41,7 +39,7 @@ jobs:
           New-Item -ItemType Directory -Force -Path $boostDir | Out-Null
 
           # Download the Boost tarball
-          $url = "https://github.com/MarkusJx/prebuilt-boost/releases/download/boost-1.86.0/boost-1.86.0-windows-2022-msvc-static-x86.tar.gz"
+          $url = "https://github.com/MarkusJx/prebuilt-boost/releases/download/1.86.0/boost-1.86.0-windows-2022-msvc-static-x86.tar.gz"
           $archive = "$boostDir\boost.tar.gz"
           Invoke-WebRequest -Uri $url -OutFile $archive
 
@@ -49,7 +47,6 @@ jobs:
           tar -xzf $archive -C $boostDir
           Remove-Item $archive
 
-      # Set BOOST_ROOT for Windows based on the extracted path
       - name: Set BOOST_ROOT (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
@@ -57,7 +54,6 @@ jobs:
           $boostRoot = "${{ github.workspace }}\QuSpin-Extensions\boost\boost"
           echo "BOOST_ROOT=$boostRoot" >> $env:GITHUB_ENV
 
-      # Set BOOST_ROOT for Linux/macOS from the action's output
       - name: Set BOOST_ROOT (Linux/macOS)
         if: runner.os != 'Windows'
         shell: bash

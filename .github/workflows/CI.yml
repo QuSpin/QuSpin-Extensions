@@ -23,12 +23,43 @@ jobs:
           repository: QuSpin/QuSpin
           path: ${{github.workspace}}/QuSpin
 
-      - name: Install boost
+      - name: Install boost (Linux/macOS)
+        if: runner.os != 'Windows'
         uses: MarkusJx/install-boost@v2.4.5
-        id: install-boost
+        id: install-boost-unix
         with:
           boost_version: 1.86.0
-          boost_install_dir: ${{github.workspace}}/QuSpin-Extensions
+          boost_install_dir: ${{ github.workspace }}/QuSpin-Extensions
+
+      - name: Install boost (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $boostDir = "${{ github.workspace }}\QuSpin-Extensions\boost"
+          New-Item -ItemType Directory -Force -Path $boostDir | Out-Null
+
+          # Download the Boost tarball
+          $url = "https://github.com/MarkusJx/prebuilt-boost/releases/download/1.86.0/boost-1.86.0-windows-2022-msvc-static-x86.tar.gz"
+          $archive = "$boostDir\boost.tar.gz"
+          Invoke-WebRequest -Uri $url -OutFile $archive
+
+          # Use Windows built-in tar.exe (handles symlinks correctly, unlike 7-Zip)
+          tar -xzf $archive -C $boostDir
+          Remove-Item $archive
+
+      - name: Set BOOST_ROOT (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          $boostRoot = "${{ github.workspace }}\QuSpin-Extensions\boost\boost"
+          echo "BOOST_ROOT=$boostRoot" >> $env:GITHUB_ENV
+
+      - name: Set BOOST_ROOT (Linux/macOS)
+        if: runner.os != 'Windows'
+        shell: bash
+        run: |
+          echo "BOOST_ROOT=${{ steps.install-boost-unix.outputs.BOOST_ROOT }}" >> $GITHUB_ENV
+
 
       - name : Set up Python
         uses: actions/setup-python@v5
