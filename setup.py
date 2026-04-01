@@ -78,7 +78,7 @@ def extra_link_args() -> List[str]:
         extra_link_args = ["/openmp"]
     elif sys.platform == "darwin":
         _, lib_dir = _find_libomp()
-        extra_link_args = ["-lomp", f"-L{lib_dir}"]
+        extra_link_args = ["-lomp", f"-L{lib_dir}", f"-Wl,-rpath,{lib_dir}"]
     else:
         extra_link_args = ["-fopenmp"]
 
