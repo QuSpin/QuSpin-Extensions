@@ -67,8 +67,6 @@ jobs:
         env:
           CIBW_BUILD: ${{ matrix.python }}-*
           BOOST_ROOT: ${{ env.BOOST_ROOT }}
-          CIBW_REPAIR_WHEEL_COMMAND_MACOS: >
-            delocate-wheel --exclude libomp -w {dest_dir} {wheel}
 
       - uses: actions/upload-artifact@v4
         with:
