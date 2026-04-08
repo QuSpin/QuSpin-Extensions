@@ -63,7 +63,9 @@ jobs:
         shell: bash
         run: |
           echo "BOOST_ROOT=${{ steps.install-boost-unix.outputs.BOOST_ROOT }}" >> $GITHUB_ENV
-
+      - name: Install libomp on macOS
+        if: runner.os == 'macOS'
+        run: brew install libomp
       - name: Build wheels
         uses: pypa/cibuildwheel@v3.1.2
         env:
