@@ -67,7 +67,7 @@ jobs:
         if: runner.os == 'macOS'
         run: brew install libomp
       - name: Build wheels
-        uses: pypa/cibuildwheel@v3.1.2
+        uses: pypa/cibuildwheel@v3.4.1
         env:
           CIBW_BUILD: ${{ matrix.python }}-*
           BOOST_ROOT: ${{ env.BOOST_ROOT }}
