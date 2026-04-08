@@ -19,7 +19,7 @@ jobs:
         python: [cp311, cp312, cp313, cp314]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Set up QEMU
         if: runner.os == 'Linux'
@@ -81,7 +81,7 @@ jobs:
     name: Build source distribution
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
 
       - name: Install boost
         uses: MarkusJx/install-boost@v2.4.5
